@@ -12,6 +12,12 @@ interface Props {
   posts: [Post];
 }
 
+interface Currencies {
+  [key: string]: string;
+};
+
+
+
 const Home = ({ posts }: Props) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [postsPerPage, setPostsPerPage] = useState<number>(9);
@@ -30,7 +36,7 @@ const Home = ({ posts }: Props) => {
   useEffect(() => {
     const currencyRequest = async () => {
       const getCurr = await axios.get(
-        "https://api.currencyapi.com/v3/latest?apikey=xHykqZcG5R2sZNin76xpuCoJVIstzx8tS1JXR1c8"
+        "https://api.currencyapi.com/v3/latest?apikey=mK6PCn2Fqy7bwpRqomQ69Oh3A59hQ74GFNQcKLJo"
       );
       const { CAD, GBP, CNY, EUR, NOK, AUD } = getCurr.data.data;
 
@@ -51,7 +57,7 @@ const Home = ({ posts }: Props) => {
 
   useEffect(() => {
     const currencyCalc = (type: any) => {
-      const types = {
+      const types: Currencies = {
         USD: "USD",
         EUR: "EUR",
         GBP: "GBP",

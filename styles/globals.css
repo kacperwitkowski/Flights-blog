@@ -1,16 +1,26 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.correct {
+ @apply bg-[#6aaa64] text-white;
+}
+.present {
+ @apply bg-[#c9b458] text-white;
+}
+.absent {
+ @apply bg-[#787c7e] text-white;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.cube-row {
+ @apply flex gap-[5px];
 }
 
-* {
-  box-sizing: border-box;
+.letter {
+ @apply uppercase flex flex-col items-center justify-center text-3xl font-bold w-[3.5rem] h-[3.5rem] sm:w-16 sm:h-16 border-2 border-[#d3d6da];
+}
+
+.reset-board {
+ @apply pl-[20px] bg-transparent text-[#6aaa64] text-3xl;
 }

@@ -145,7 +145,6 @@ export const wordList = {
     "shamu",
     "sight",
     "stoke",
-    "swazi",
     "suomi",
     "sakai",
     "sinai",

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,8 +13,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "suppressImplicitAnyIndexErrors": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/worlde.jsx", "components/worlde/Keyboard.jsx"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/worlde3.jsx", "components/worlde/Keyboard.jsx"],
+  "exclude": ["node_modules"],
 }

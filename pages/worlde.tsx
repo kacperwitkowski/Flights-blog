@@ -1,168 +1,55 @@
 import React, { useEffect, useState } from "react";
-import Footer from "../components/Footer";
+import useWordle from "../components/worlde/useWordleHook";
+import Grid from "../components/worlde/Grid";
 import Header from "../components/Header";
-import { wordList } from "../components/worlde/Data";
-import Keyboard from "../components/worlde/Keyboard";
 import Head from "next/head";
+import Footer from "../components/Footer";
+import Keypad from "../components/worlde/Keypad";
 
-const Worlde = () => {
-  const [boardData, setBoardData] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(false);
-  const [charArray, setCharArray] = useState([]);
-  const [showInfo, setShowInfo] = useState(false);
+const Wordle: React.FC = () => {
+  const [solution, setSolution] = useState<string>('');
+  const [showInfo, setShowInfo] = useState<boolean>(false);
 
-  const resetBoard = () => {
-    let alphabetIndex = Math.floor(Math.random() * 26);
-    let wordIndex = Math.floor(
-      Math.random() * wordList[String.fromCharCode(97 + alphabetIndex)]?.length
-    );
-    let newBoardData = {
-      ...boardData,
-      solution: wordList[String.fromCharCode(97 + alphabetIndex)][wordIndex],
-      rowIndex: 0,
-      boardWords: [],
-      boardRowStatus: [],
-      presentCharArray: [],
-      absentCharArray: [],
-      correctCharArray: [],
-      status: "IN_PROGRESS",
-    };
-    setBoardData(newBoardData);
-    localStorage.setItem("board-data", JSON.stringify(newBoardData));
-  };
+  const {
+    currentGuess,
+    handleKeyup,
+    guesses,
+    isCorrect,
+    resetGame,
+    resetGameFn,
+    setResetGame,
+    turn,
+    usedKeys,
+    wrongMessage,
+  } = useWordle(solution);
 
   useEffect(() => {
-    setBoardData(JSON.parse(localStorage.getItem("board-data")));
+    fetch("https://worlde-api.herokuapp.com/solutions")
+      .then((res) => res.json())
+      .then((data) => {
+        const randomSolution =
+          data[Math.floor(Math.random() * data.length)].word;
 
-    if (!boardData || !boardData.solution) {
-      let alphabetIndex = Math.floor(Math.random() * 26);
-      let wordIndex = Math.floor(
-        Math.random() * wordList[String.fromCharCode(97 + alphabetIndex)].length
-      );
-      let newBoardData = {
-        ...boardData,
-        solution: wordList[String.fromCharCode(97 + alphabetIndex)][wordIndex],
-        rowIndex: 0,
-        boardWords: [],
-        boardRowStatus: [],
-        presentCharArray: [],
-        absentCharArray: [],
-        correctCharArray: [],
-        status: "IN_PROGRESS",
-      };
-      setBoardData(newBoardData);
-      localStorage.setItem("board-data", JSON.stringify(newBoardData));
+        setSolution(randomSolution);
+      });
+    setResetGame(false);
+  }, [setSolution, resetGame]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyup);
+
+    if (isCorrect) {
+      window.removeEventListener("keydown", handleKeyup);
     }
-  }, []);
 
-  const handleMessage = (message) => {
-    setMessage(message);
-    setTimeout(() => {
-      setMessage(null);
-    }, 3000);
-  };
-
-  const handleError = () => {
-    setError(true);
-    setTimeout(() => {
-      setError(false);
-    }, 2000);
-  };
-
-  const enterBoardWord = (word) => {
-    let boardWords = boardData.boardWords;
-    let boardRowStatus = boardData.boardRowStatus;
-    let solution = boardData.solution;
-    let presentCharArray = boardData.presentCharArray;
-    let absentCharArray = boardData.absentCharArray;
-    let correctCharArray = boardData.correctCharArray;
-    let rowIndex = boardData.rowIndex;
-    let rowStatus = [];
-    let matchCount = 0;
-    let status = boardData.status;
-
-    for (let index = 0; index < word.length; index++) {
-      if (solution.charAt(index) === word.charAt(index)) {
-        matchCount++;
-        rowStatus.push("correct");
-        if (!correctCharArray.includes(word.charAt(index)))
-          correctCharArray.push(word.charAt(index));
-        if (presentCharArray.indexOf(word.charAt(index)) !== -1)
-          presentCharArray.splice(
-            presentCharArray.indexOf(word.charAt(index)),
-            1
-          );
-      } else if (solution.includes(word.charAt(index))) {
-        rowStatus.push("present");
-        if (
-          !correctCharArray.includes(word.charAt(index)) &&
-          !presentCharArray.includes(word.charAt(index))
-        )
-          presentCharArray.push(word.charAt(index));
-      } else {
-        rowStatus.push("absent");
-        if (!absentCharArray.includes(word.charAt(index)))
-          absentCharArray.push(word.charAt(index));
-      }
+    if (turn > 5) {
+      window.removeEventListener("keydown", handleKeyup);
     }
-    if (matchCount === 5) {
-      status = "WIN";
-      handleMessage("YOU WON");
-    } else if (rowIndex + 1 === 6) {
-      status = "LOST";
-      handleMessage(boardData.solution);
-    }
-    boardRowStatus.push(rowStatus);
-    boardWords[rowIndex] = word;
-    let newBoardData = {
-      ...boardData,
-      boardWords: boardWords,
-      boardRowStatus: boardRowStatus,
-      rowIndex: rowIndex + 1,
-      status: status,
-      presentCharArray: presentCharArray,
-      absentCharArray: absentCharArray,
-      correctCharArray: correctCharArray,
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyup);
     };
-    setBoardData(newBoardData);
-    localStorage.setItem("board-data", JSON.stringify(newBoardData));
-  };
-
-  const enterCurrentText = (word) => {
-    let boardWords = boardData.boardWords;
-    let rowIndex = boardData.rowIndex;
-    boardWords[rowIndex] = word;
-    let newBoardData = { ...boardData, boardWords: boardWords };
-    setBoardData(newBoardData);
-  };
-
-  const handleKeyPress = (key) => {
-    if (boardData.rowIndex > 5 || boardData.status === "WIN") return;
-    if (key === "ENTER") {
-      if (charArray.length === 5) {
-        let word = charArray.join("").toLowerCase();
-        if (!wordList[word.charAt(0)].includes(word)) {
-          handleError();
-          handleMessage("Not in word list");
-          return;
-        }
-        enterBoardWord(word);
-        setCharArray([]);
-      } else {
-        handleMessage("Not enough letters");
-      }
-      return;
-    }
-    if (key === "⌫") {
-      charArray.splice(charArray.length - 1, 1);
-      setCharArray([...charArray]);
-    } else if (charArray.length < 5) {
-      charArray.push(key);
-      setCharArray([...charArray]);
-    }
-    enterCurrentText(charArray.join("").toLowerCase());
-  };
+  }, [handleKeyup, isCorrect]);
 
   return (
     <>
@@ -199,8 +86,8 @@ const Worlde = () => {
           <p className="text-xl">WORLDE</p>
           <button
             className="reset-board"
-            onClick={resetBoard}
             title="Play Again"
+            onClick={resetGameFn}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -218,33 +105,8 @@ const Worlde = () => {
             </svg>
           </button>
         </div>
-
-        {message && <div className="message">{message}</div>}
-        <div className="flex flex-col gap-[5px]">
-          {[0, 1, 2, 3, 4, 5].map((row, rowIndex) => (
-            <div
-              className={`cube-row ${
-                boardData && row === boardData.rowIndex && error && "error"
-              }`}
-              key={rowIndex}
-            >
-              {[0, 1, 2, 3, 4].map((column, letterIndex) => (
-                <div
-                  key={letterIndex}
-                  className={`letter ${
-                    boardData && boardData.boardRowStatus[row]
-                      ? boardData.boardRowStatus[row][column]
-                      : ""
-                  }`}
-                >
-                  {boardData &&
-                    boardData.boardWords[row] &&
-                    boardData.boardWords[row][column]}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
+        {turn > 5 && solution}
+        {wrongMessage && <div className="message">{wrongMessage}</div>}
         {showInfo && (
           <div className="z-10 bg-white w-full h-full mx-auto absolute flex flex-col">
             <div className="w-[90%] md:w-1/2 mx-auto relative">
@@ -351,11 +213,12 @@ const Worlde = () => {
             </div>
           </div>
         )}
-        <Keyboard boardData={boardData} handleKeyPress={handleKeyPress} />
+        <Grid currentGuess={currentGuess} guesses={guesses} turn={turn} />
+        <Keypad usedKeys={usedKeys} resetGame={resetGame} />
       </div>
       <Footer />
     </>
   );
 };
 
-export default Worlde;
+export default Wordle;

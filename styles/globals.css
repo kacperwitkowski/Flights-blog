@@ -24,3 +24,98 @@
 .reset-board {
  @apply pl-[20px] bg-transparent text-[#6aaa64] text-3xl;
 }
+
+.row {
+@apply text-center flex justify-center
+}
+
+.row > div {
+@apply block w-[60px] h-[60px] m-[4px] text-center uppercase border-[1px] border-[#bbb] leading-[60px]
+}
+
+.row > div.green {
+  --background: #6aaa64;
+ --border-color: #6aaa64;
+animation: flip 0.5s ease forwards;
+}
+.row > div.grey {
+  --background: #787c7e;
+  --border-color: #787c7e;
+animation: flip 0.5s ease forwards;
+}
+.row > div.yellow {
+  --background: #c9b458;
+  --border-color: #c9b458;
+animation: flip 0.5s ease forwards;
+}
+.row > div:nth-child(2) {
+animation-delay: 0.2s;
+}
+.row > div:nth-child(3) {
+animation-delay: 0.4s;
+}
+.row > div:nth-child(4) {
+animation-delay: 0.6s;
+}
+.row > div:nth-child(5) {
+animation-delay: 0.8s;
+}
+
+.keypad {
+  max-width: 500px;
+  margin: 20px auto 58px auto;
+  text-align: center;
+}
+.keypad > div {
+  margin: 5px;
+  width: 40px;
+  height: 60px;
+  background: #e5e7eb;
+  display: inline-block;
+  border-radius: 6px;
+  line-height: 60px;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  cursor: pointer;
+}
+.keypad > div.green {
+  background: #5ac85a;
+  color: #fff;
+  transition: all 0.3s ease-in;
+}
+.keypad > div.yellow {
+  background: #e2cc68;
+  color: #fff;
+  transition: all 0.3s ease-in;
+}
+.keypad > div.grey {
+  background: #a1a1a1;
+  color: #fff;
+  transition: all 0.3s ease-in;
+}
+
+@keyframes flip {
+  0% {
+    transform: rotateX(0);
+    background-color: white;
+    border-color: black;
+  }
+  45% {
+    transform: rotateX(90deg);
+    background-color: white;
+    border-color: black;
+  }
+  55% {
+    transform: rotateX(90deg);
+background-color: var(--background);
+border-color: var(--border-color);
+color:#eee;
+  }
+  100% {
+    transform: rotateX(0);
+    background-color: var(--background);
+border-color: var(--border-color); 
+color:#eee;
+  }
+}

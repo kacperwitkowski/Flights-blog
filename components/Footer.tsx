@@ -1,6 +1,6 @@
 import React from "react";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-[#fec144] p-3 flex-col sm:flex-row flex items-center text-center">
       <div className="w-full">

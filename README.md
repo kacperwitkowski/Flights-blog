@@ -3,7 +3,7 @@
 App builded with Next.js, Typescript, Sanity and Tailwind.
 
 * Uses Sanity as a CMS to make and store flights offers
-* My own version og "Wordle" game
+* My own version of "Wordle" game
 * Words API made by myself
 * Design made using Tailwind CSS
 

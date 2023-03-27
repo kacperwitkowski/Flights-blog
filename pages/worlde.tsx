@@ -24,7 +24,7 @@ const Wordle: React.FC = () => {
   } = useWordle(solution);
 
   useEffect(() => {
-    fetch("https://worlde-api.herokuapp.com/solutions")
+    fetch("https://wordleapi.cyclic.app/solutions")
       .then((res) => res.json())
       .then((data) => {
         const randomSolution =
